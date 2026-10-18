@@ -18,11 +18,9 @@ export type Project = {
 export type Job = {
   role: string;
   company: string;
-  logo: 'jxtech' | 'aljawad' | 'nadeer' | 't2' | 'manafa';
+  logo: 'aljawad' | 'nadeer' | 't2' | 'manafa';
   location: string;
   period: string;
-  current?: boolean;
-  link?: { label: string; href: string };
   points: string[];
 };
 
@@ -42,13 +40,12 @@ export type Content = {
     openToWork: string;
     openToWorkLong: string;
     openToWorkRoles: string;
-    sections: Record<'top' | 'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'credentials' | 'contact', string>;
+    sections: Record<'top' | 'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'studio' | 'credentials' | 'contact', string>;
     heads: Record<'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'credentials', { kicker: string; title: string; lead?: string }>;
     hero: { terminalAria: string; headlineAria: string };
     about: { artAlt: string; artCaption: string };
     infra: { empty: string; connected: string; planned: string; hint: string; diagramAria: string; groups: [string, string, string] };
     projects: { open: string; read: string; caseStudy: string; closeCase: string; problem: string; architecture: string; built: string; outcome: string; stack: string; screenshotOf: string };
-    experience: { current: string };
     stack: { also: string };
     credentials: { certs: string; education: string };
     contact: { kicker: string; titleA: string; titleEm: string; titleB: string; lead: string; leadStrong: string; leadAfter: string; copy: string; copied: string; copyFail: string };
@@ -67,6 +64,7 @@ export type Content = {
   facts: { label: string; value: string }[];
   stats: { value: number; label: string }[];
   experience: Job[];
+  studio: { kicker: string; name: string; description: string; visit: string };
   education: { title: string; org: string; period: string; note?: string }[];
   certifications: { title: string; issuer: string; year: string; badge: 'aws' | 'oci' | null }[];
   skills: { group: string; items: string[] }[];

@@ -1,7 +1,5 @@
 ---
-import { Image } from 'astro:assets';
 import { content, person, type Lang } from '../i18n';
-import art from '../assets/illustrations/jana-illustration-development.svg';
 
 interface Props {
   lang: Lang;
@@ -11,11 +9,10 @@ const t = content[lang];
 const c = t.ui.contact;
 ---
 
-<section id="contact" class="section contact" data-section={t.ui.sections.contact} data-index="07">
+<section id="contact" class="section contact" data-section={t.ui.sections.contact} data-index="08">
   <div class="contact-bg" aria-hidden="true"></div>
-  <div class="container contact-grid">
-    <div>
-      <p class="section-index mono" data-reveal><b>[07]</b> {c.kicker}</p>
+  <div class="container">
+      <p class="section-index mono" data-reveal><b>[08]</b> {c.kicker}</p>
       <h2 class="contact-title" data-reveal style="--i:1">
         <Fragment set:html={c.titleA} /><span>{c.titleEm}</span>{c.titleB}
       </h2>
@@ -35,9 +32,6 @@ const c = t.ui.contact;
         <li><a class="btn btn-ghost" href={person.social.github} target="_blank" rel="noopener">GitHub ↗</a></li>
         <li><a class="btn btn-ghost" href={person.cv} download>{t.ui.downloadCv} ↓</a></li>
       </ul>
-    </div>
-
-    <Image src={art} alt="" width={720} class="contact-art" data-reveal style="--i:2" />
   </div>
 
   <footer class="footer container">
@@ -82,29 +76,6 @@ const c = t.ui.contact;
     background:
       radial-gradient(55% 60% at 50% 110%, rgb(38 31 179 / 0.5), transparent 70%),
       radial-gradient(35% 35% at 85% 95%, rgb(191 9 47 / 0.22), transparent 70%);
-  }
-
-  .contact-grid {
-    display: grid;
-    gap: 48px;
-    align-items: center;
-  }
-  @media (min-width: 1040px) {
-    .contact-grid {
-      grid-template-columns: 1.4fr 1fr;
-    }
-  }
-  :global(.contact-art) {
-    width: 100%;
-    max-width: 520px;
-    height: auto;
-    justify-self: center;
-    border-radius: var(--radius);
-  }
-  @media (max-width: 1039px) {
-    :global(.contact-art) {
-      display: none;
-    }
   }
 
   .contact-title {

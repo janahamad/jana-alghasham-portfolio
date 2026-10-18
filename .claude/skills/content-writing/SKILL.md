@@ -24,5 +24,5 @@ Audience: recruiters and hiring managers for DevOps / SRE / infrastructure / sys
 - Every English change needs the Arabic counterpart in the same edit.
 - Natural Modern Standard Arabic, not literal translation. Feminine first person/role forms (مهندسة، مؤسِّسة، متاحة).
 - Keep tool and product names in Latin script (Docker, ERPNext, BoostSEO); prefix with و directly (وDocker).
-- Company names stay in Latin script until Jana confirms official Arabic spellings.
+- Company names in Arabic: الجواد بريميوم، ندير، منافع المالية، T2 (confirmed by Jana). JXTech Studio stays in Latin script.
 - Western digits (2025), em dash for ranges, Arabic month names (يناير، فبراير…).

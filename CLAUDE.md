@@ -18,8 +18,8 @@ Single-page, bilingual (English `/` + Arabic `/ar/`, RTL) portfolio for Jana Alg
 - `src/i18n/index.ts` — `content[lang]`, `person` (email, links, CV path: language-independent), section ids, helpers.
 - `src/data/infra.ts` — geometry of the infrastructure map. Keep it conceptual: **no IPs, ports, or client project names**; tools not in use must be `planned: true`.
 - `src/components/Page.astro` — assembles the page; `src/pages/index.astro` (en) and `src/pages/ar/index.astro` (ar) just render `<Page lang>`.
-- `src/components/` — one component per section, each takes `lang`: Header (incl. menu dialog + language switch), Hero, About, InfraMap, Projects (incl. case-study drawer), Experience, Stack, Credentials, Contact (incl. footer).
-- `src/assets/illustrations/` — Jana's illustrations (infrastructure in About, development in Contact).
+- `src/components/` — one component per section, each takes `lang`: Header (incl. menu dialog + language switch), Hero, About, InfraMap, Projects (incl. case-study drawer), Experience, Stack, Studio (JXTech Studio founder card), Credentials, Contact (incl. footer).
+- `src/assets/illustrations/` — Jana's illustrations (infrastructure in About, development in Studio).
 - `assets_inbox/` — raw source material (brand kit, CVs, old data). Not shipped.
 
 ## Rules
@@ -32,6 +32,6 @@ Single-page, bilingual (English `/` + Arabic `/ar/`, RTL) portfolio for Jana Alg
 - RTL: use logical CSS (`margin-inline-*`, `inset-inline-*`, `padding-inline-*`), multiply horizontal motion by `var(--dir)`. Never letter-space or uppercase Arabic (global `.mono:lang(ar)` handles it). Keep the terminal, infra diagram and tech chips `dir="ltr"`.
 - Never show the phone number publicly.
 
-## Pending decisions
-- JXTech Studio founding date (experience entry currently says "Present").
-- Official Arabic spellings of company names (kept in Latin script on `/ar/` for now).
+## Content decisions (from Jana)
+- JXTech Studio is its own section after Stack, NOT an Experience entry. Text is only the one-line description, no dates/"present".
+- Arabic company names: الجواد بريميوم، ندير، منافع المالية، T2.

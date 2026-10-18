@@ -2,21 +2,6 @@ import type { Content, Job, Project } from './types';
 
 const experience: Job[] = [
   {
-    role: 'Founder',
-    company: 'JXTech Studio',
-    logo: 'jxtech',
-    location: 'Saudi Arabia',
-    period: 'Present',
-    current: true,
-    link: { label: 'jxtechstudio.com', href: 'https://jxtechstudio.com/' },
-    points: [
-      'Founded a digital product studio that designs, builds and ships web products, from MVPs to full-scale platforms.',
-      'Launched the studio’s own products: BoostSEO (AI-powered SEO audits) and invoi (AI invoice management), with Bayanuk (job-offer and contract analysis) coming soon.',
-      'Run the studio’s infrastructure end to end: a hardened VPS behind Cloudflare and Nginx, Jenkins CI/CD, Dockerized apps and Prometheus/Grafana monitoring.',
-      'Deliver web development, SaaS and brand & UI design work for clients.',
-    ],
-  },
-  {
     role: 'IT Engineer / Infrastructure & Systems Administrator',
     company: 'Al Jawad Premium',
     logo: 'aljawad',
@@ -290,6 +275,7 @@ export const en: Content = {
       projects: 'Projects',
       experience: 'Experience',
       stack: 'Stack',
+      studio: 'JXTech Studio',
       credentials: 'Credentials',
       contact: 'Contact',
     },
@@ -341,7 +327,6 @@ export const en: Content = {
       stack: 'Stack',
       screenshotOf: 'Screenshot of',
     },
-    experience: { current: 'Current' },
     stack: { also: 'Also:' },
     credentials: { certs: 'Certifications', education: 'Education' },
     contact: {
@@ -392,6 +377,12 @@ export const en: Content = {
     { value: 4, label: 'Cloud platforms' },
   ],
   experience,
+  studio: {
+    kicker: 'Founder',
+    name: 'JXTech Studio',
+    description: 'A digital product studio that designs, builds and ships web products, from MVPs to full-scale platforms.',
+    visit: 'Visit jxtechstudio.com',
+  },
   education: [
     { title: 'Bachelor’s Degree in Computer Science', org: 'Qassim University', period: '2019 — 2024' },
     {

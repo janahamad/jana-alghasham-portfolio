@@ -2,23 +2,8 @@ import type { Content, Job, Project } from './types';
 
 const experience: Job[] = [
   {
-    role: 'المؤسِّسة',
-    company: 'JXTech Studio',
-    logo: 'jxtech',
-    location: 'السعودية',
-    period: 'حتى الآن',
-    current: true,
-    link: { label: 'jxtechstudio.com', href: 'https://jxtechstudio.com/' },
-    points: [
-      'أسّست استوديو منتجات رقمية يصمّم ويبني ويطلق منتجات الويب، من النموذج الأولي (MVP) وحتى المنصات المتكاملة.',
-      'أطلقت منتجات الاستوديو الخاصة: BoostSEO لتدقيق السيو بالذكاء الاصطناعي، وinvoi لإدارة الفواتير بالذكاء الاصطناعي، ويأتي قريبًا «بيانك» لتحليل عروض العمل والعقود.',
-      'أدير البنية التحتية للاستوديو بالكامل: خادم VPS مؤمَّن خلف Cloudflare وNginx، وCI/CD عبر Jenkins، وتطبيقات على Docker، ومراقبة عبر Prometheus وGrafana.',
-      'أقدّم للعملاء خدمات تطوير الويب ومنتجات SaaS وتصميم الهوية والواجهات.',
-    ],
-  },
-  {
     role: 'مهندسة تقنية معلومات / مسؤولة البنية التحتية والأنظمة',
-    company: 'Al Jawad Premium',
+    company: 'الجواد بريميوم',
     logo: 'aljawad',
     location: 'بريدة',
     period: 'ديسمبر 2025 — يونيو 2026',
@@ -31,7 +16,7 @@ const experience: Job[] = [
   },
   {
     role: 'مهندسة بنية تحتية (مبتدئة)',
-    company: 'Nadeer',
+    company: 'ندير',
     logo: 'nadeer',
     location: 'الرياض · هجين',
     period: 'يونيو 2025 — أغسطس 2025',
@@ -55,7 +40,7 @@ const experience: Job[] = [
   },
   {
     role: 'تدريب تعاوني في البنية التحتية وDevOps',
-    company: 'Manafa Capital',
+    company: 'منافع المالية',
     logo: 'manafa',
     location: 'الرياض',
     period: 'يوليو 2023 — أغسطس 2023',
@@ -266,6 +251,7 @@ export const ar: Content = {
       projects: 'المشاريع',
       experience: 'الخبرات',
       stack: 'الأدوات',
+      studio: 'JXTech Studio',
       credentials: 'الشهادات',
       contact: 'تواصل',
     },
@@ -317,7 +303,6 @@ export const ar: Content = {
       stack: 'التقنيات',
       screenshotOf: 'لقطة شاشة من',
     },
-    experience: { current: 'حاليًا' },
     stack: { also: 'أيضًا:' },
     credentials: { certs: 'الشهادات المهنية', education: 'التعليم' },
     contact: {
@@ -368,6 +353,12 @@ export const ar: Content = {
     { value: 4, label: 'منصات سحابية' },
   ],
   experience,
+  studio: {
+    kicker: 'المؤسِّسة',
+    name: 'JXTech Studio',
+    description: 'استوديو منتجات رقمية يصمّم ويبني ويطلق منتجات الويب، من النموذج الأولي (MVP) وحتى المنصات المتكاملة.',
+    visit: 'زيارة jxtechstudio.com',
+  },
   education: [
     { title: 'بكالوريوس علوم الحاسب', org: 'جامعة القصيم', period: '2019 — 2024' },
     {
