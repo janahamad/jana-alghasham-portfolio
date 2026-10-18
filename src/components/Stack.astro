@@ -1,0 +1,99 @@
+---
+import SectionHead from './SectionHead.astro';
+import { content, pad, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const head = t.ui.heads.stack;
+---
+
+<section id="stack" class="section" data-section={t.ui.sections.stack} data-index="05">
+  <div class="container">
+    <SectionHead index="05" kicker={head.kicker} title={head.title} lead={head.lead} />
+
+    <div class="groups">
+      {
+        t.skills.map((g, i) => (
+          <div class="group" data-reveal style={`--i:${i % 3}`}>
+            <p class="mono group-head">
+              <span>{pad(i + 1)}</span>
+              {g.group}
+            </p>
+            <ul dir="ltr">
+              {g.items.map((s) => (
+                <li class="chip">{s}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+
+    <p class="soft mono" data-reveal>
+      <span>{t.ui.stack.also}</span>
+      {t.softSkills.join(' · ')}
+    </p>
+  </div>
+</section>
+
+<style>
+  .groups {
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  @media (min-width: 700px) {
+    .groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1080px) {
+    .groups {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .group {
+    background: var(--bg);
+    padding: clamp(20px, 2.4vw, 32px);
+  }
+  .group-head {
+    margin: 0 0 18px;
+    display: flex;
+    gap: 12px;
+    color: var(--text);
+  }
+  .group-head span {
+    color: var(--accent-bright);
+  }
+  .group ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  :global([dir='rtl']) .group ul {
+    justify-content: flex-end;
+  }
+  .group .chip {
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--line);
+  }
+  .soft {
+    margin: 28px 0 0;
+    color: var(--text-muted);
+    line-height: 1.9;
+  }
+  .soft span {
+    color: var(--text-faint);
+    margin-inline-end: 8px;
+  }
+</style>

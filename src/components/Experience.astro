@@ -1,0 +1,220 @@
+---
+import { Image } from 'astro:assets';
+import SectionHead from './SectionHead.astro';
+import { content, type Lang } from '../i18n';
+import jxtech from '../assets/logos/jxtech.svg';
+import aljawad from '../assets/logos/aljawad_logo.png';
+import nadeer from '../assets/logos/Nadeer_logo.jpg';
+import t2 from '../assets/logos/T2_logo.jpg';
+import manafa from '../assets/logos/Manafa_logo.jpg';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const head = t.ui.heads.experience;
+const logos = { jxtech, aljawad, nadeer, t2, manafa } as const;
+---
+
+<section id="experience" class="section" data-section={t.ui.sections.experience} data-index="04">
+  <div class="container">
+    <SectionHead index="04" kicker={head.kicker} title={head.title} />
+
+    <ol class="timeline">
+      {
+        t.experience.map((job) => (
+          <li class:list={['job', { 'is-current': job.current }]} data-reveal>
+            <div class="job-when">
+              <span class="mono job-period">{job.period}</span>
+              <span class="mono job-loc">{job.location}</span>
+            </div>
+            <div class="job-main">
+              <div class="job-head">
+                <Image src={logos[job.logo]} alt="" width={48} height={48} class:list={['job-logo', { 'is-tile': job.logo === 'jxtech' }]} />
+                <div class="job-title">
+                  <h3 class="job-role">{job.role}</h3>
+                  <p class="job-company">
+                    <bdi>{job.company}</bdi>
+                    {job.link && (
+                      <a href={job.link.href} target="_blank" rel="noopener" class="job-link mono" dir="ltr">
+                        {job.link.label} ↗
+                      </a>
+                    )}
+                  </p>
+                </div>
+                {job.current && (
+                  <span class="mono job-current">
+                    <i aria-hidden="true" />
+                    {t.ui.experience.current}
+                  </span>
+                )}
+              </div>
+              <ul class="job-points">
+                {job.points.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+  .job {
+    position: relative;
+    display: grid;
+    gap: 16px;
+    padding: clamp(28px, 4vw, 44px) 0;
+    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 900px) {
+    .job {
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+    }
+  }
+
+  /* Founder role gets a highlighted panel */
+  .job.is-current {
+    margin-block: 24px;
+    padding-inline: clamp(20px, 3vw, 40px);
+    border: 0;
+    border-radius: var(--radius);
+    background:
+      radial-gradient(70% 120% at 100% 0%, rgb(38 31 179 / 0.28), transparent 70%),
+      var(--surface);
+    box-shadow: 0 0 0 1px var(--line-strong);
+  }
+
+  .job-when {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    align-content: start;
+  }
+  @media (min-width: 900px) {
+    .job-when {
+      flex-direction: column;
+      padding-top: 6px;
+    }
+  }
+  .job-period {
+    color: var(--text);
+  }
+  .job-loc {
+    color: var(--text-faint);
+  }
+
+  .job-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  :global(.job-logo) {
+    flex: none;
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    border-radius: 10px;
+    background: #fff;
+    padding: 4px;
+  }
+  :global(.job-logo.is-tile) {
+    background: none;
+    padding: 0;
+    border-radius: 11px;
+  }
+  .job-title {
+    min-width: 0;
+  }
+  .job-role {
+    margin: 0;
+    font-size: clamp(19px, 2vw, 24px);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+  }
+  :global([lang='ar']) .job-role {
+    letter-spacing: 0;
+    line-height: 1.5;
+  }
+  .job-company {
+    margin: 2px 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 14px;
+    color: var(--accent-bright);
+  }
+  .job-link {
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 4px;
+    letter-spacing: 0.04em !important;
+    text-transform: none !important;
+    transition: color 200ms ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .job-link:hover {
+      color: var(--text);
+    }
+  }
+  .job-current {
+    margin-inline-start: auto;
+    align-self: start;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background: rgb(61 220 132 / 0.12);
+    color: #7cf0b0;
+    white-space: nowrap;
+  }
+  .job-current i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #3ddc84;
+  }
+  @media (max-width: 520px) {
+    .job-current {
+      display: none;
+    }
+  }
+
+  .job-points {
+    margin: 20px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+    color: var(--text-muted);
+    max-width: 78ch;
+  }
+  .job-points li {
+    position: relative;
+    padding-inline-start: 22px;
+    text-wrap: pretty;
+  }
+  .job-points li::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: 2px;
+    top: 0.75em;
+    width: 8px;
+    height: 1.5px;
+    background: var(--crimson);
+  }
+</style>

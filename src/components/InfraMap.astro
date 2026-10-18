@@ -1,0 +1,426 @@
+---
+import SectionHead from './SectionHead.astro';
+import { nodes, edges, groups, NODE_W as W, NODE_H as H, VIEW } from '../data/infra';
+import { content, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const ui = t.ui.infra;
+const head = t.ui.heads.infrastructure;
+const text = (id: string) => t.infra.nodes[id];
+const catSlug = (c: string) => c.replace(/\W/g, '').toLowerCase();
+
+const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+
+// Orthogonal routing: straight when aligned, otherwise an elbow.
+// Horizontal-first "L" ends on the target's top/bottom; "Z" bends halfway between columns.
+function route(fromId: string, toId: string, kind: 'L' | 'Z' = 'L') {
+  const a = byId[fromId];
+  const b = byId[toId];
+  const acx = a.x + W / 2, acy = a.y + H / 2;
+  const bcx = b.x + W / 2, bcy = b.y + H / 2;
+
+  if (a.y === b.y) {
+    const [sx, tx] = a.x < b.x ? [a.x + W, b.x] : [a.x, b.x + W];
+    return { d: `M${sx},${acy} H${tx}`, lx: (sx + tx) / 2, ly: acy - 8, anchor: 'middle' };
+  }
+  if (a.x === b.x) {
+    const [sy, ty] = a.y < b.y ? [a.y + H, b.y] : [a.y, b.y + H];
+    return { d: `M${acx},${sy} V${ty}`, lx: acx + 8, ly: (sy + ty) / 2 + 4, anchor: 'start' };
+  }
+  const sx = a.x < b.x ? a.x + W : a.x;
+  const tx = a.x < b.x ? b.x : b.x + W;
+  if (kind === 'Z') {
+    // Z: horizontal, vertical in the gutter, horizontal
+    const mx = (sx + tx) / 2;
+    return { d: `M${sx},${acy} H${mx} V${bcy} H${tx}`, lx: mx + 8, ly: (acy + bcy) / 2 + 4, anchor: 'start' };
+  }
+  // L: horizontal out of the source, vertical into the target's top or bottom
+  const ty = b.y > a.y ? b.y : b.y + H;
+  return { d: `M${sx},${acy} H${bcx} V${ty}`, lx: (sx + bcx) / 2, ly: acy - 8, anchor: 'middle' };
+}
+
+const routed = edges.map((e) => ({ ...e, ...route(e.from, e.to, e.route) }));
+const categories = [...new Set(nodes.map((n) => n.category))];
+---
+
+<section id="infrastructure" class="section infra" data-section={t.ui.sections.infrastructure} data-index="02">
+  <div class="container">
+    <SectionHead index="02" kicker={head.kicker} title={head.title} lead={head.lead} />
+
+    <div class="map" data-map data-reveal data-empty={ui.empty} data-connected={ui.connected} data-planned={ui.planned}>
+      <div class="map-scroll" tabindex="-1" dir="ltr">
+        <svg viewBox={`0 0 ${VIEW.w} ${VIEW.h}`} role="group" aria-label={ui.diagramAria}>
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,1 L9,5 L0,9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+            </marker>
+          </defs>
+
+          {
+            groups.map((g) => (
+              <g class:list={['grp', { 'is-planned': g.planned, 'is-inner': g.inner }]}>
+                <rect x={g.x} y={g.y} width={g.w} height={g.h} rx="16" />
+                <text x={g.inner ? g.x + g.w - 14 : g.x + 16} y={g.y + g.h - 12} text-anchor={g.inner ? 'end' : 'start'}>
+                  {ui.groups[g.label]}
+                </text>
+              </g>
+            ))
+          }
+
+          {
+            routed.map((e) => (
+              <g class:list={['edge', { 'is-planned': e.planned }]} data-from={e.from} data-to={e.to}>
+                <path d={e.d} marker-end="url(#arrow)" />
+                {e.label && (
+                  <text x={e.lx} y={e.ly} text-anchor={e.anchor}>
+                    {e.label}
+                  </text>
+                )}
+              </g>
+            ))
+          }
+
+          {
+            nodes.map((n) => (
+              <g
+                class:list={['node', `cat-${catSlug(n.category)}`, { 'is-planned': n.planned }]}
+                data-node={n.id}
+                tabindex="0"
+                role="button"
+                aria-label={`${n.label}: ${text(n.id).sub}`}
+                aria-controls="infra-detail"
+                transform={`translate(${n.x} ${n.y})`}
+              >
+                <rect class="node-box" width={W} height={H} rx="12" />
+                <rect class="node-tick" x="0" y="14" width="3" height={H - 28} rx="1.5" />
+                <text class="node-label" x="18" y="27">{n.label}</text>
+                <text class="node-sub" x="18" y="46">{text(n.id).sub}</text>
+              </g>
+            ))
+          }
+        </svg>
+      </div>
+      <p class="map-hint mono" aria-hidden="true">{ui.hint}</p>
+
+      <div id="infra-detail" class="detail" aria-live="polite" data-detail>
+        <p class="detail-empty mono">{ui.empty}</p>
+      </div>
+      <ul class="legend">
+        {categories.map((c) => <li class:list={['mono', `cat-${catSlug(c)}`]}><i></i>{t.infra.categories[c]}</li>)}
+      </ul>
+    </div>
+
+    <script
+      type="application/json"
+      id="infra-data"
+      set:html={JSON.stringify(
+        nodes.map(({ id, label, category, planned }) => ({ id, label, category: t.infra.categories[category], planned, ...text(id) })),
+      )}
+    ></script>
+  </div>
+</section>
+
+<script>
+  type N = { id: string; label: string; sub: string; category: string; description: string; planned?: boolean };
+  const map = document.querySelector<HTMLElement>('[data-map]')!;
+  const detail = map.querySelector<HTMLElement>('[data-detail]')!;
+  const { empty, connected, planned } = map.dataset as Record<string, string>;
+  const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const data: N[] = JSON.parse(document.getElementById('infra-data')!.textContent!);
+  const nodeEls = [...map.querySelectorAll<SVGGElement>('[data-node]')];
+  const edgeEls = [...map.querySelectorAll<SVGGElement>('.edge')];
+  let selected: string | null = null;
+
+  function neighbours(id: string) {
+    const set = new Set([id]);
+    edgeEls.forEach((e) => {
+      if (e.dataset.from === id) set.add(e.dataset.to!);
+      if (e.dataset.to === id) set.add(e.dataset.from!);
+    });
+    return set;
+  }
+
+  function highlight(id: string | null) {
+    map.classList.toggle('is-focused', !!id);
+    if (!id) {
+      nodeEls.forEach((n) => n.classList.remove('is-lit'));
+      edgeEls.forEach((e) => e.classList.remove('is-lit'));
+      return;
+    }
+    const lit = neighbours(id);
+    nodeEls.forEach((n) => n.classList.toggle('is-lit', lit.has(n.dataset.node!)));
+    edgeEls.forEach((e) => e.classList.toggle('is-lit', e.dataset.from === id || e.dataset.to === id));
+  }
+
+  function select(id: string | null) {
+    selected = id;
+    nodeEls.forEach((n) => n.classList.toggle('is-selected', n.dataset.node === id));
+    highlight(id);
+    const n = data.find((d) => d.id === id);
+    if (!n) {
+      detail.innerHTML = `<p class="detail-empty mono">${esc(empty)}</p>`;
+      return;
+    }
+    const linked = [...neighbours(n.id)].filter((x) => x !== n.id).map((x) => data.find((d) => d.id === x)!.label);
+    detail.innerHTML = `
+      <div class="detail-head">
+        <span class="mono detail-cat">${esc(n.planned ? planned : n.category)}</span>
+        <h3><bdi>${esc(n.label)}</bdi> <span>${esc(n.sub)}</span></h3>
+      </div>
+      <p>${esc(n.description)}</p>
+      ${linked.length ? `<p class="mono detail-links">${esc(connected)}: <bdi>${esc(linked.join(' · '))}</bdi></p>` : ''}`;
+  }
+
+  nodeEls.forEach((el) => {
+    const id = el.dataset.node!;
+    el.addEventListener('pointerenter', (e) => e.pointerType === 'mouse' && highlight(id));
+    el.addEventListener('pointerleave', () => highlight(selected));
+    el.addEventListener('focus', () => highlight(id));
+    el.addEventListener('blur', () => highlight(selected));
+    el.addEventListener('click', () => select(selected === id ? null : id));
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        select(selected === id ? null : id);
+      }
+    });
+  });
+
+  map.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') select(null);
+  });
+</script>
+
+<style>
+  .infra {
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgb(22 17 121 / 0.35), transparent 70%),
+      var(--bg);
+  }
+
+  .map {
+    display: grid;
+    gap: 16px;
+  }
+
+  .map-scroll {
+    border-radius: var(--radius);
+    background:
+      radial-gradient(circle at 1px 1px, rgb(233 228 229 / 0.07) 1px, transparent 0) 0 0 / 24px 24px,
+      var(--surface-2);
+    box-shadow: 0 0 0 1px var(--line);
+    padding: clamp(12px, 2vw, 24px);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .map-scroll svg {
+    width: 100%;
+    min-width: 880px;
+    height: auto;
+    overflow: visible;
+  }
+  .map-hint {
+    display: none;
+    margin: -4px 0 0;
+    text-align: center;
+    color: var(--text-faint);
+  }
+  @media (max-width: 920px) {
+    .map-hint {
+      display: block;
+    }
+  }
+
+  /* Category colours (stroke accent on each node) */
+  .cat-edge { --c: #8e88ff; }
+  .cat-source { --c: #a19c9d; }
+  .cat-ingress { --c: #e8264f; }
+  .cat-runtime { --c: #5b8cff; }
+  .cat-cicd { --c: #f2a541; }
+  .cat-observability { --c: #3ddc84; }
+  .cat-planned { --c: #6f6b6c; }
+
+  /* Groups */
+  .grp rect {
+    fill: rgb(38 31 179 / 0.06);
+    stroke: rgb(38 31 179 / 0.55);
+    stroke-width: 1.2;
+  }
+  .grp.is-inner rect {
+    fill: rgb(61 220 132 / 0.03);
+    stroke: rgb(61 220 132 / 0.25);
+    stroke-dasharray: 2 5;
+  }
+  .grp.is-planned rect {
+    fill: none;
+    stroke: var(--text-faint);
+    stroke-dasharray: 6 6;
+  }
+  .grp text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    fill: var(--text-faint);
+  }
+
+  /* Edges */
+  .edge {
+    color: rgb(233 228 229 / 0.35);
+    transition: opacity 200ms ease;
+  }
+  .edge path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.4;
+    transition:
+      stroke 200ms ease,
+      stroke-width 200ms ease;
+  }
+  .edge.is-planned path {
+    stroke-dasharray: 5 5;
+  }
+  .edge text {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--text-faint);
+  }
+
+  /* Nodes */
+  .node {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 200ms ease;
+  }
+  .node-box {
+    fill: var(--surface);
+    stroke: var(--line-strong);
+    stroke-width: 1;
+    transition:
+      stroke 200ms ease,
+      fill 200ms ease;
+  }
+  .node-tick {
+    fill: var(--c);
+  }
+  .node-label {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 15px;
+    fill: var(--text);
+  }
+  .node-sub {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--text-muted);
+  }
+  .node.is-planned .node-box {
+    fill: transparent;
+    stroke-dasharray: 4 4;
+  }
+  .node.is-planned .node-label {
+    fill: var(--text-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .node:hover .node-box {
+      stroke: var(--c);
+    }
+  }
+  .node:focus-visible .node-box,
+  .node.is-selected .node-box {
+    stroke: var(--c);
+    stroke-width: 1.6;
+    fill: #1f201f;
+  }
+
+  /* Focus mode: dim everything not connected */
+  .map.is-focused .node:not(.is-lit) {
+    opacity: 0.22;
+  }
+  .map.is-focused .edge:not(.is-lit) {
+    opacity: 0.12;
+  }
+  .map.is-focused .edge.is-lit {
+    color: var(--text);
+  }
+  .map.is-focused .edge.is-lit text {
+    fill: var(--text-muted);
+  }
+
+  /* Detail panel */
+  .detail {
+    min-height: 132px;
+    padding: 20px 24px;
+    border-radius: var(--radius);
+    box-shadow: 0 0 0 1px var(--line);
+    background: var(--surface-2);
+  }
+  .detail :global(.detail-empty) {
+    margin: 0;
+    color: var(--text-faint);
+  }
+  .detail :global(.detail-head) {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .detail :global(.detail-cat) {
+    color: var(--accent-bright);
+  }
+  .detail :global(h3) {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .detail :global(h3 span) {
+    font-family: var(--font-mono);
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-inline-start: 8px;
+  }
+  .detail :global(p) {
+    margin: 0;
+    max-width: 75ch;
+    color: var(--text-muted);
+  }
+  .detail :global(.detail-links) {
+    margin-top: 12px;
+    color: var(--text-faint);
+  }
+
+  .legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    color: var(--text-muted);
+  }
+  .legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .legend i {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    background: var(--c);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .node,
+    .edge,
+    .edge path,
+    .node-box {
+      transition: none;
+    }
+  }
+</style>

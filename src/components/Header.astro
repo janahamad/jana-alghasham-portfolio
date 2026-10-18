@@ -1,0 +1,552 @@
+---
+import { content, person, sectionIds, pad, homeOf, otherLang, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const other = otherLang(lang);
+---
+
+<header class="header" data-header>
+  <div class="header-inner container">
+    <a href="#top" class="brand" aria-label={t.profile.name}>
+      <img src="/brand/jana-icon.svg" alt="" width="34" height="34" />
+      <span class="brand-name">{t.profile.shortFirst} <span>{t.profile.shortLast}</span></span>
+    </a>
+
+    <p class="where mono" aria-hidden="true">
+      <span data-where-index>00</span>
+      <span class="where-sep">/</span>
+      <span data-where-label>{t.ui.sections.top}</span>
+    </p>
+
+    <div class="header-actions">
+      <a href="#contact" class="otw mono"><i aria-hidden="true"></i>{t.ui.openToWork}</a>
+      <a href={homeOf(other)} hreflang={other} lang={other} class="lang mono" aria-label={t.ui.switchLangAria}>{t.ui.switchLang}</a>
+      <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="site-menu" data-menu-open>
+        <span class="mono menu-word">{t.ui.menu}</span>
+        <span class="bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<dialog id="site-menu" class="menu" aria-label={t.ui.menu} data-menu>
+  <div class="menu-top container">
+    <a href="#top" class="brand" data-menu-link>
+      <img src="/brand/jana-icon.svg" alt="" width="34" height="34" />
+      <span class="brand-name">{t.profile.shortFirst} <span>{t.profile.shortLast}</span></span>
+    </a>
+    <div class="header-actions">
+      <a href={homeOf(other)} hreflang={other} lang={other} class="lang mono" aria-label={t.ui.switchLangAria}>{t.ui.switchLang}</a>
+      <button class="menu-btn is-close" type="button" data-menu-close>
+        <span class="mono menu-word">{t.ui.close}</span>
+        <span class="bars" aria-hidden="true"><i></i><i></i></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="menu-body container">
+    <nav aria-label={t.ui.menu}>
+      <ol class="menu-list">
+        {
+          sectionIds.map((id, i) => (
+            <li style={`--i:${i}`}>
+              <a href={`#${id}`} data-menu-link>
+                <span class="mono menu-num">{pad(i)}</span>
+                <span class="menu-label">{t.ui.sections[id]}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </nav>
+
+    <aside class="menu-aside" style={`--i:${sectionIds.length}`}>
+      <a href="#contact" class="otw otw-lg mono" data-menu-link><i aria-hidden="true"></i>{t.ui.openToWorkLong}</a>
+      <p class="mono menu-aside-title">{t.ui.getInTouch}</p>
+      <a href={`mailto:${person.email}`} class="menu-mail" dir="ltr">{person.email}</a>
+      <ul class="menu-socials">
+        <li><a href={person.social.linkedin} target="_blank" rel="noopener">LinkedIn ↗</a></li>
+        <li><a href={person.social.github} target="_blank" rel="noopener">GitHub ↗</a></li>
+        <li><a href={person.cv} download>{t.ui.downloadCv} ↓</a></li>
+      </ul>
+    </aside>
+  </div>
+</dialog>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const menu = document.querySelector<HTMLDialogElement>('[data-menu]')!;
+  const openBtn = document.querySelector<HTMLButtonElement>('[data-menu-open]')!;
+  const closeBtn = document.querySelector<HTMLButtonElement>('[data-menu-close]')!;
+
+  // Solid header once the page has scrolled.
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 8);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // ----- Menu: native <dialog> for focus trap + inert page, JS for exit animation -----
+  let closeTimer: number | undefined;
+
+  function openMenu() {
+    window.clearTimeout(closeTimer);
+    menu.showModal();
+    document.documentElement.classList.add('menu-open');
+    requestAnimationFrame(() => requestAnimationFrame(() => (menu.dataset.state = 'open')));
+  }
+
+  function closeMenu(then?: () => void) {
+    if (!menu.open) return then?.();
+    menu.dataset.state = 'closing';
+    const done = () => {
+      window.clearTimeout(closeTimer);
+      menu.removeEventListener('transitionend', onEnd);
+      delete menu.dataset.state;
+      menu.close();
+      document.documentElement.classList.remove('menu-open');
+      openBtn.focus({ preventScroll: true });
+      then?.();
+    };
+    const onEnd = (e: TransitionEvent) => e.target === menu && e.propertyName === 'clip-path' && done();
+    menu.addEventListener('transitionend', onEnd);
+    closeTimer = window.setTimeout(done, 400); // fallback (reduced motion / no transition)
+  }
+
+  openBtn.addEventListener('click', openMenu);
+  closeBtn.addEventListener('click', () => closeMenu());
+  menu.addEventListener('cancel', (e) => {
+    e.preventDefault(); // Esc: run our exit animation instead of the instant close
+    closeMenu();
+  });
+
+  menu.querySelectorAll<HTMLAnchorElement>('[data-menu-link]').forEach((link) => {
+    link.addEventListener('click', (e) => {
+      const id = link.getAttribute('href')!.slice(1);
+      e.preventDefault();
+      closeMenu(() => {
+        document.getElementById(id)?.scrollIntoView();
+        history.replaceState(null, '', `#${id}`);
+      });
+    });
+  });
+
+  // ----- Current-section indicator -----
+  const idx = document.querySelector('[data-where-index]')!;
+  const lbl = document.querySelector('[data-where-label]')!;
+  const sectionEls = [...document.querySelectorAll<HTMLElement>('[data-section]')];
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target as HTMLElement;
+        idx.textContent = el.dataset.index!;
+        lbl.textContent = el.dataset.section!;
+      }
+    },
+    { rootMargin: '-45% 0px -50% 0px' },
+  );
+  sectionEls.forEach((el) => io.observe(el));
+</script>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    height: var(--header-h);
+    border-bottom: 1px solid transparent;
+    transition:
+      background-color 300ms ease,
+      border-color 300ms ease;
+  }
+  .header.is-scrolled {
+    background: rgb(3 3 3 / 0.72);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--line);
+  }
+
+  .header-inner,
+  .menu-top {
+    height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    flex: none;
+  }
+  .brand img {
+    border-radius: 9px;
+  }
+  .brand-name {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-size: 20px;
+    letter-spacing: -0.01em;
+  }
+  .brand-name span {
+    font-family: var(--font-sans);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-inline-start: 4px;
+  }
+  :global([lang='ar']) .brand-name {
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+  :global([lang='ar']) .brand-name span {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .where {
+    margin: 0;
+    color: var(--text-muted);
+    display: flex;
+    gap: 8px;
+  }
+  .where span:first-child {
+    color: var(--accent-bright);
+  }
+  .where-sep {
+    color: var(--text-faint);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* ----- Open to work pill ----- */
+  .otw {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 42px;
+    padding: 0 16px;
+    border-radius: 999px;
+    background: rgb(61 220 132 / 0.12);
+    box-shadow: inset 0 0 0 1px rgb(61 220 132 / 0.45);
+    color: #7cf0b0;
+    font-size: 12.5px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 200ms ease;
+  }
+  .otw:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .otw:hover {
+      background: rgb(61 220 132 / 0.2);
+    }
+  }
+  .otw i {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3ddc84;
+    flex: none;
+  }
+  .otw i::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: #3ddc84;
+    animation: ping 2s var(--ease-out) infinite;
+  }
+  @keyframes ping {
+    from {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .otw i::after {
+      animation: none;
+    }
+  }
+  .otw-lg {
+    justify-self: start;
+    height: 48px;
+    padding: 0 20px;
+    font-size: 13px;
+    margin-bottom: 20px;
+    white-space: normal;
+  }
+
+  .lang {
+    display: inline-grid;
+    place-items: center;
+    min-width: 42px;
+    height: 42px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    font-weight: 600;
+    transition:
+      transform 160ms var(--ease-out),
+      border-color 200ms ease;
+  }
+  .lang:lang(ar) {
+    font-family: var(--font-ar);
+    font-size: 14px;
+  }
+  .lang:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .lang:hover {
+      border-color: var(--text-muted);
+    }
+  }
+
+  .menu-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    height: 42px;
+    padding-inline: 16px 7px;
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
+    transition:
+      transform 160ms var(--ease-out),
+      border-color 200ms ease;
+  }
+  .menu-btn:active {
+    transform: scale(0.97);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .menu-btn:hover {
+      border-color: var(--text-muted);
+    }
+  }
+  .bars {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--crimson);
+  }
+  .bars i {
+    position: absolute;
+    left: 8px;
+    right: 8px;
+    height: 1.5px;
+    background: #fff;
+    border-radius: 2px;
+  }
+  .bars i:first-child {
+    top: 11px;
+  }
+  .bars i:last-child {
+    bottom: 11px;
+  }
+  .is-close .bars i:first-child {
+    top: 13.25px;
+    transform: rotate(45deg);
+  }
+  .is-close .bars i:last-child {
+    bottom: 13.25px;
+    transform: rotate(-45deg);
+  }
+
+  @media (max-width: 1080px) {
+    .where {
+      display: none;
+    }
+  }
+  @media (max-width: 640px) {
+    .brand-name {
+      display: none;
+    }
+    .menu-word {
+      display: none;
+    }
+    .menu-btn {
+      padding: 0 6px;
+    }
+    .otw {
+      padding: 0 13px;
+      font-size: 12px;
+    }
+  }
+
+  /* ----- Menu dialog ----- */
+  .menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: var(--text);
+    background:
+      radial-gradient(80% 60% at 85% 110%, rgb(38 31 179 / 0.45), transparent 70%),
+      radial-gradient(50% 40% at 10% -10%, rgb(22 17 121 / 0.6), transparent 70%),
+      var(--bg);
+    overflow-y: auto;
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 280ms var(--ease-in-out);
+  }
+  .menu[data-state='open'] {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 560ms var(--ease-drawer);
+  }
+  .menu::backdrop {
+    background: transparent;
+  }
+
+  .menu-body {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 48px;
+    padding-top: clamp(24px, 6vh, 72px);
+    padding-bottom: 48px;
+  }
+  @media (min-width: 900px) {
+    .menu-body {
+      grid-template-columns: 1.6fr 1fr;
+      align-items: end;
+      min-height: calc(100dvh - var(--header-h));
+    }
+  }
+
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu-list li,
+  .menu-aside {
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 200ms ease,
+      transform 200ms ease;
+  }
+  .menu[data-state='open'] .menu-list li,
+  .menu[data-state='open'] .menu-aside {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 500ms var(--ease-out),
+      transform 600ms var(--ease-out);
+    transition-delay: calc(160ms + var(--i) * 40ms);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .menu,
+    .menu[data-state='open'] {
+      clip-path: none;
+      transition: opacity 200ms ease;
+    }
+    .menu:not([data-state='open']) {
+      opacity: 0;
+    }
+    .menu-list li,
+    .menu-aside {
+      transform: none;
+    }
+  }
+
+  .menu-list a {
+    display: flex;
+    align-items: baseline;
+    gap: 18px;
+    padding: 4px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-num {
+    color: var(--text-faint);
+    min-width: 2ch;
+    transition: color 200ms ease;
+  }
+  .menu-label {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-size: clamp(34px, 6.2vh, 64px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    transition:
+      color 200ms ease,
+      transform 300ms var(--ease-out);
+  }
+  :global([lang='ar']) .menu-label {
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.4;
+    font-size: clamp(30px, 5.4vh, 54px);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .menu-list a:hover .menu-label {
+      color: var(--accent-bright);
+      transform: translateX(calc(10px * var(--dir)));
+    }
+    .menu-list a:hover .menu-num {
+      color: var(--accent-bright);
+    }
+  }
+
+  .menu-aside {
+    display: grid;
+    gap: 14px;
+    align-content: end;
+  }
+  .menu-aside-title {
+    margin: 0;
+    color: var(--text-faint);
+  }
+  .menu-mail {
+    justify-self: start;
+    font-size: clamp(18px, 2vw, 22px);
+    text-decoration: underline;
+    text-decoration-color: var(--crimson);
+    text-underline-offset: 6px;
+    word-break: break-all;
+  }
+  .menu-socials {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    color: var(--text-muted);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .menu-socials a:hover {
+      color: var(--text);
+    }
+  }
+
+  :global(html.menu-open) {
+    overflow: hidden;
+  }
+</style>
