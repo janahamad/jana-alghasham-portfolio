@@ -11,3 +11,6 @@ assets_inbox/photo/jana.jpg
 
 # Original license PDFs (contain national ID). Public redacted copies live in public/licenses/.
 src/assets/services/*.pdf
+
+# Local exports (GIFs, screenshots)
+exports/
