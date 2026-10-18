@@ -18,7 +18,7 @@ Single-page, bilingual (English `/` + Arabic `/ar/`, RTL) portfolio for Jana Alg
 - `src/i18n/index.ts` — `content[lang]`, `person` (email, links, CV path: language-independent), section ids, helpers.
 - `src/data/infra.ts` — geometry of the infrastructure map. Keep it conceptual: **no IPs, ports, or client project names**; tools not in use must be `planned: true`.
 - `src/components/Page.astro` — assembles the page; `src/pages/index.astro` (en) and `src/pages/ar/index.astro` (ar) just render `<Page lang>`.
-- `src/components/` — one component per section, each takes `lang`: Header (incl. menu dialog + language switch), Hero, About, InfraMap, Projects (incl. case-study drawer), Experience, Stack, Studio (JXTech Studio founder card), Credentials, Services (freelance services → `serviceLinks` in `src/i18n/links.ts`, thumbnails in `src/assets/services/<id>.png`), Contact (incl. footer).
+- `src/components/` — one component per section, each takes `lang`: Header (incl. menu dialog + language switch), Hero, About, InfraMap, Projects (one-at-a-time carousel with prev/next, progress bars, swipe and arrow keys; incl. case-study drawer), Experience, Stack, Studio (JXTech Studio founder card), Credentials, Services (freelance services → `serviceLinks` in `src/i18n/links.ts`, thumbnails in `src/assets/services/<id>.png`), Contact (incl. footer).
 - `src/assets/illustrations/` — Jana's illustrations (infrastructure in About, development in Studio).
 - `assets_inbox/` — raw source material (brand kit, CVs, old data). Not shipped.
 

@@ -21,39 +21,66 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
   <div class="container">
     <SectionHead index="03" kicker={head.kicker} title={head.title} lead={head.lead} />
 
-    <ul class="grid">
-      {
-        projects.map((p, i) => (
-          <li class:list={['card', { 'is-featured': i === 0 }]} data-reveal style={`--i:${i % 2}`}>
-            <button type="button" class="card-hit" data-open-case={p.slug} aria-haspopup="dialog" aria-controls="case-drawer">
-              <span class="sr-only">{ui.open}: {p.title}</span>
+    <div class="carousel" data-carousel data-reveal>
+      <ul class="track" data-track aria-label={ui.carousel} aria-roledescription="carousel">
+        {
+          projects.map((p, i) => (
+            <li class="slide" data-slide aria-roledescription="slide" aria-label={`${i + 1} ${ui.of} ${projects.length}`}>
+              <article class="card">
+                <button type="button" class="card-hit" data-open-case={p.slug} aria-haspopup="dialog" aria-controls="case-drawer">
+                  <span class="sr-only">{ui.open}: {p.title}</span>
+                </button>
+                <div class="card-media">
+                  <Image
+                    src={img(p.image)}
+                    alt=""
+                    widths={[640, 960, 1400]}
+                    sizes="(min-width: 900px) 720px, 92vw"
+                    loading={i < 2 ? 'eager' : 'lazy'}
+                  />
+                </div>
+                <div class="card-body">
+                  <p class="card-meta mono">
+                    <span class="card-num">{pad(i + 1)}</span>
+                    <span>{p.category}</span>
+                    <span class="card-type">{p.type}</span>
+                  </p>
+                  <h3 class="card-title">{p.title}</h3>
+                  <p class="card-summary">{p.summary}</p>
+                  <ul class="card-stack" aria-label={ui.stack}>
+                    {p.stack.slice(0, 6).map((s) => <li class="chip">{s}</li>)}
+                  </ul>
+                  <span class="card-cta mono" aria-hidden="true">{ui.read} <i>{t.ui.arrow}</i></span>
+                </div>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="controls">
+        <p class="count mono" aria-live="polite">
+          <span data-current>01</span>
+          <span class="count-sep">/</span>
+          <span>{pad(projects.length)}</span>
+        </p>
+        <div class="bars" role="group" aria-label={ui.carousel}>
+          {projects.map((p, i) => (
+            <button type="button" class="bar" data-goto={i} aria-label={`${pad(i + 1)}: ${p.title}`}>
+              <i />
             </button>
-            <div class="card-media">
-              <Image
-                src={img(p.image)}
-                alt=""
-                widths={i === 0 ? [640, 960, 1400] : [480, 720, 960]}
-                sizes={i === 0 ? '(min-width: 900px) 1200px, 92vw' : '(min-width: 900px) 600px, 92vw'}
-                loading={i < 2 ? 'eager' : 'lazy'}
-              />
-            </div>
-            <div class="card-body">
-              <p class="card-meta mono">
-                <span class="card-num">{pad(i + 1)}</span>
-                <span>{p.category}</span>
-                <span class="card-type">{p.type}</span>
-              </p>
-              <h3 class="card-title">{p.title}</h3>
-              <p class="card-summary">{p.summary}</p>
-              <ul class="card-stack" aria-label={ui.stack}>
-                {p.stack.slice(0, i === 0 ? 7 : 4).map((s) => <li class="chip">{s}</li>)}
-              </ul>
-              <span class="card-cta mono" aria-hidden="true">{ui.read} <i>{t.ui.arrow}</i></span>
-            </div>
-          </li>
-        ))
-      }
-    </ul>
+          ))}
+        </div>
+        <div class="arrows">
+          <button type="button" class="arrow" data-prev aria-label={ui.prev}>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M10 3 5 8l5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
+          <button type="button" class="arrow" data-next aria-label={ui.next}>
+            <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="m6 3 5 5-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -110,6 +137,60 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
 </dialog>
 
 <script>
+  // ----- Carousel -----
+  const carousel = document.querySelector<HTMLElement>('[data-carousel]')!;
+  const track = carousel.querySelector<HTMLElement>('[data-track]')!;
+  const slides = [...carousel.querySelectorAll<HTMLElement>('[data-slide]')];
+  const bars = [...carousel.querySelectorAll<HTMLButtonElement>('[data-goto]')];
+  const prevBtn = carousel.querySelector<HTMLButtonElement>('[data-prev]')!;
+  const nextBtn = carousel.querySelector<HTMLButtonElement>('[data-next]')!;
+  const currentEl = carousel.querySelector('[data-current]')!;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let current = 0;
+
+  function setCurrent(i: number) {
+    current = i;
+    currentEl.textContent = String(i + 1).padStart(2, '0');
+    bars.forEach((b, j) => b.setAttribute('aria-current', String(j === i)));
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === slides.length - 1;
+    // Off-screen slides are inert so Tab only reaches the visible project.
+    slides.forEach((s, j) => (s.inert = j !== i));
+  }
+
+  function goTo(i: number) {
+    const target = Math.max(0, Math.min(slides.length - 1, i));
+    // Scroll the track itself (not scrollIntoView) so the page never jumps.
+    // offsetLeft is relative to the track in both LTR and RTL layouts.
+    const left = slides[target].offsetLeft - slides[0].offsetLeft;
+    track.scrollTo({ left, behavior: reduceMotion.matches ? 'auto' : 'smooth' });
+    setCurrent(target);
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+  bars.forEach((b) => b.addEventListener('click', () => goTo(Number(b.dataset.goto))));
+
+  // Keep state in sync with swipes / trackpad scrolling.
+  const slideIO = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) if (e.isIntersecting) setCurrent(slides.indexOf(e.target as HTMLElement));
+    },
+    { root: track, threshold: 0.6 },
+  );
+  slides.forEach((s) => slideIO.observe(s));
+
+  // Arrow keys while focus is inside the carousel; direction follows reading order.
+  const rtl = document.documentElement.dir === 'rtl';
+  carousel.addEventListener('keydown', (e) => {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    e.preventDefault();
+    const forward = (e.key === 'ArrowRight') !== rtl;
+    goTo(current + (forward ? 1 : -1));
+  });
+
+  setCurrent(0);
+
   const drawer = document.querySelector<HTMLDialogElement>('[data-drawer]')!;
   const panel = drawer.querySelector<HTMLElement>('.drawer-panel')!;
   const cases = [...drawer.querySelectorAll<HTMLElement>('[data-case]')];
@@ -158,33 +239,32 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
 </script>
 
 <style>
-  .grid {
+  /* ----- Carousel ----- */
+  .carousel {
+    display: grid;
+    gap: 20px;
+  }
+  .track {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    gap: clamp(16px, 2vw, 24px);
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 24px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    border-radius: var(--radius);
   }
-  @media (min-width: 900px) {
-    .grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .card.is-featured {
-      grid-column: 1 / -1;
-      grid-template-columns: 1.35fr 1fr;
-      grid-template-rows: none;
-    }
-    .card.is-featured .card-media {
-      aspect-ratio: auto;
-      min-height: 100%;
-    }
-    .card.is-featured .card-body {
-      align-content: center;
-      padding: clamp(28px, 3vw, 48px);
-    }
-    .card.is-featured .card-title {
-      font-size: clamp(30px, 3vw, 44px);
-    }
+  .track::-webkit-scrollbar {
+    display: none;
+  }
+  .slide {
+    display: grid;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
   }
 
   .card {
@@ -193,9 +273,15 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
     grid-template-rows: auto 1fr;
     border-radius: var(--radius);
     background: var(--surface);
-    box-shadow: 0 0 0 1px var(--line);
+    box-shadow: inset 0 0 0 1px var(--line);
     overflow: hidden;
-    transition: box-shadow 250ms ease;
+  }
+  @media (min-width: 900px) {
+    .card {
+      grid-template-columns: 1.35fr 1fr;
+      grid-template-rows: none;
+      min-height: 480px;
+    }
   }
 
   /* The whole card is one big button (stretched hit area). */
@@ -213,7 +299,12 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
     aspect-ratio: 16 / 10;
     overflow: hidden;
     background: var(--surface-2);
-    border-bottom: 1px solid var(--line);
+  }
+  @media (min-width: 900px) {
+    .card-media {
+      aspect-ratio: auto;
+      height: 100%;
+    }
   }
   .card-media img {
     width: 100%;
@@ -224,10 +315,11 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
   }
 
   .card-body {
-    display: grid;
-    gap: 12px;
-    align-content: start;
-    padding: clamp(20px, 2.4vw, 32px);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    justify-content: center;
+    padding: clamp(22px, 3vw, 48px);
   }
   .card-meta {
     margin: 0;
@@ -245,10 +337,10 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
   }
   .card-title {
     margin: 0;
-    font-size: clamp(22px, 2vw, 28px);
+    font-size: clamp(24px, 2.8vw, 40px);
     font-weight: 600;
-    line-height: 1.15;
-    letter-spacing: -0.015em;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
     text-wrap: balance;
   }
   .card-summary {
@@ -274,13 +366,7 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
     color: var(--accent-bright);
     transition: transform 250ms var(--ease-out);
   }
-
   @media (hover: hover) and (pointer: fine) {
-    .card:hover {
-      box-shadow:
-        0 0 0 1px var(--line-strong),
-        0 24px 60px -30px rgb(38 31 179 / 0.7);
-    }
     .card:hover .card-media img {
       transform: scale(1.03);
     }
@@ -288,9 +374,106 @@ const img = (name: string) => images[`../assets/projects/${name}.png`].default;
       transform: translateX(calc(4px * var(--dir)));
     }
   }
-  .card:has(.card-hit:active) {
-    transform: scale(0.99);
-    transition: transform 160ms var(--ease-out);
+
+  /* ----- Controls ----- */
+  .controls {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: clamp(16px, 3vw, 32px);
+  }
+  .count {
+    margin: 0;
+    display: flex;
+    gap: 8px;
+    color: var(--text-faint);
+    font-variant-numeric: tabular-nums;
+  }
+  .count [data-current] {
+    color: var(--text);
+  }
+
+  .bars {
+    display: flex;
+    gap: 6px;
+  }
+  .bar {
+    flex: 1;
+    height: 24px; /* generous hit area around a thin bar */
+    display: grid;
+    align-items: center;
+  }
+  .bar i {
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line-strong);
+    transition: background-color 250ms ease;
+  }
+  .bar[aria-current='true'] i {
+    background: var(--crimson);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bar:hover i {
+      background: var(--text-muted);
+    }
+    .bar[aria-current='true']:hover i {
+      background: var(--crimson);
+    }
+  }
+
+  .arrows {
+    display: flex;
+    gap: 10px;
+  }
+  .arrow {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    transition:
+      transform 160ms var(--ease-out),
+      background-color 200ms ease,
+      border-color 200ms ease,
+      opacity 200ms ease;
+  }
+  .arrow svg {
+    width: 18px;
+    height: 18px;
+    transform: scaleX(var(--dir));
+  }
+  .arrow:active:not(:disabled) {
+    transform: scale(0.94);
+  }
+  .arrow[data-next] {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: #fff;
+  }
+  .arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .arrow:not(:disabled):hover {
+      border-color: var(--text-muted);
+    }
+    .arrow[data-next]:not(:disabled):hover {
+      background: #d40c36;
+      border-color: #d40c36;
+    }
+  }
+  @media (max-width: 560px) {
+    .controls {
+      grid-template-columns: auto auto;
+      justify-content: space-between;
+    }
+    .bars {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
   }
 
   /* ----- Drawer ----- */

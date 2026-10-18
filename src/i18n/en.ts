@@ -318,6 +318,10 @@ export const en: Content = {
       groups: ['VPS · jxtechstudio.com', 'Observability', 'Planned / roadmap'],
     },
     projects: {
+      prev: 'Previous project',
+      next: 'Next project',
+      of: 'of',
+      carousel: 'Projects',
       open: 'Open case study',
       read: 'Read case study',
       caseStudy: 'Case study',

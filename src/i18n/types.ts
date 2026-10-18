@@ -45,7 +45,7 @@ export type Content = {
     hero: { terminalAria: string; headlineAria: string };
     about: { artAlt: string; artCaption: string };
     infra: { empty: string; connected: string; planned: string; hint: string; diagramAria: string; groups: [string, string, string] };
-    projects: { open: string; read: string; caseStudy: string; closeCase: string; problem: string; architecture: string; built: string; outcome: string; stack: string; screenshotOf: string };
+    projects: { prev: string; next: string; of: string; carousel: string; open: string; read: string; caseStudy: string; closeCase: string; problem: string; architecture: string; built: string; outcome: string; stack: string; screenshotOf: string };
     stack: { also: string };
     credentials: { certs: string; education: string };
     contact: { kicker: string; titleA: string; titleEm: string; titleB: string; lead: string; leadStrong: string; leadAfter: string; copy: string; copied: string; copyFail: string };

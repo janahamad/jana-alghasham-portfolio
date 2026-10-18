@@ -294,6 +294,10 @@ export const ar: Content = {
       groups: ['VPS · jxtechstudio.com', 'المراقبة', 'مخطّط مستقبلًا'],
     },
     projects: {
+      prev: 'المشروع السابق',
+      next: 'المشروع التالي',
+      of: 'من',
+      carousel: 'المشاريع',
       open: 'افتح دراسة الحالة',
       read: 'اقرأ دراسة الحالة',
       caseStudy: 'دراسة حالة',
