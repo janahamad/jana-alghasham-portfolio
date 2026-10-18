@@ -8,3 +8,6 @@ dist/
 assets_inbox/cv/
 assets_inbox/old-teamdata.js
 assets_inbox/photo/jana.jpg
+
+# Original license PDFs (contain national ID). Public redacted copies live in public/licenses/.
+src/assets/services/*.pdf

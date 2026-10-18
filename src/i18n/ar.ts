@@ -204,24 +204,6 @@ const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ranaahmd/SEO' },
     ],
   },
-  {
-    slug: 'team-portfolio',
-    title: 'منصة معرض أعمال الفريق',
-    category: 'Full-stack · Docker',
-    type: 'فريق',
-    image: 'team-portfolio',
-    summary: 'منصة لعرض أعمال الفريق تعتمد على API، مبنية بـ React وExpress في بيئة Docker Compose متعددة الحاويات. بالشراكة مع رنا أحمد.',
-    problem: 'صفحات «من نحن» الثابتة لا تقول الكثير عمّا يستطيع الفريق فعله.',
-    flow: ['الزوّار', 'React (Vite)', 'Express API', 'بيانات الفريق'],
-    built: [
-      'ملفات أعضاء ديناميكية ومعرض مشاريع وخريطة بنية تحتية تفاعلية.',
-      'واجهتان أمامية وخلفية في حاويات تُدار عبر Docker Compose خلف Nginx.',
-      'سمة داكنة وتحسينات في إمكانية الوصول والتباين.',
-    ],
-    outcomes: ['إدارة الملفات مركزيًا عبر API واحدة.', 'بيئات متّسقة من التطوير حتى النشر.'],
-    stack: ['React', 'Vite', 'Node.js', 'Express', 'Docker Compose', 'Nginx', 'Jenkins'],
-    links: [{ label: 'GitHub', href: 'https://github.com/janahamad/team-protfolio' }],
-  },
 ];
 
 export const ar: Content = {
@@ -393,6 +375,18 @@ export const ar: Content = {
         tags: ['Node.js', 'Express', 'React', 'PHP', 'ASP.NET Core', 'PostgreSQL', 'MySQL', 'MariaDB', 'Docker', 'لوحات تحكم', 'Full stack'],
       },
     ],
+    licenses: {
+      badge: 'مستقلة مرخّصة',
+      view: 'عرض الوثائق',
+      title: 'وثائق العمل الحر',
+      note: 'مسجّلة في منصة العمل الحر التابعة لوزارة الموارد البشرية والتنمية الاجتماعية، ويمكن التحقق من كل وثيقة عبر رمز QR.',
+      open: 'فتح PDF',
+      close: 'إغلاق',
+      items: [
+        { title: 'برمجة وتطوير المواقع الإلكترونية', valid: 'سارية حتى فبراير 2027', file: '/licenses/freelance-license-web-development.pdf' },
+        { title: 'الشبكات الحاسوبية السحابية (Cloud)', valid: 'سارية حتى يونيو 2027', file: '/licenses/freelance-license-cloud-networks.pdf' },
+      ],
+    },
   },
   education: [
     { title: 'بكالوريوس علوم الحاسب', org: 'جامعة القصيم', period: '2019 — 2024' },

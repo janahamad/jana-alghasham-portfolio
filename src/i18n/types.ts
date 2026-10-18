@@ -72,6 +72,16 @@ export type Content = {
     cta: string;
     // `id` matches an optional thumbnail at src/assets/services/<id>.(png|jpg|jpeg|webp|svg)
     items: { id: string; href: string; title: string; description: string; tags: string[] }[];
+    licenses: {
+      badge: string;
+      view: string;
+      title: string;
+      note: string;
+      open: string;
+      close: string;
+      // `file` is a path under public/ (redacted copies, no national ID)
+      items: { title: string; valid: string; file: string }[];
+    };
   };
   education: { title: string; org: string; period: string; note?: string }[];
   certifications: { title: string; issuer: string; year: string; badge: 'aws' | 'oci' | null }[];

@@ -31,6 +31,7 @@ Single-page, bilingual (English `/` + Arabic `/ar/`, RTL) portfolio for Jana Alg
 - Must work at 360px wide with no horizontal page scroll, in **both** languages.
 - RTL: use logical CSS (`margin-inline-*`, `inset-inline-*`, `padding-inline-*`), multiply horizontal motion by `var(--dir)`. Never letter-space or uppercase Arabic (global `.mono:lang(ar)` handles it). Keep the terminal, infra diagram and tech chips `dir="ltr"`.
 - Never show the phone number publicly.
+- Freelance licences: header badge (العمل الحر logo, `src/assets/logos/freelance.svg`) opens a dialog linking to `public/licenses/*.pdf`. These are REDACTED copies (national ID row removed with PyMuPDF). Originals in `src/assets/services/*.pdf` are git-ignored and must never be published.
 - Services section: never show the word "Fiverr" in visible text; it may only appear in the link URLs. Use the word "Freelancer".
 
 ## Content decisions (from Jana)

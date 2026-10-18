@@ -228,24 +228,6 @@ const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ranaahmd/SEO' },
     ],
   },
-  {
-    slug: 'team-portfolio',
-    title: 'Team Portfolio Platform',
-    category: 'Full-stack · Docker',
-    type: 'Team',
-    image: 'team-portfolio',
-    summary: 'An API-driven team showcase with React and Express in a multi-container Docker Compose setup. Built with Rana Ahmed.',
-    problem: 'Static “About us” pages say little about what a team can actually do.',
-    flow: ['Visitors', 'React (Vite)', 'Express API', 'Team data'],
-    built: [
-      'Dynamic member profiles, project showcase and an interactive infrastructure map.',
-      'Containerized frontend and backend orchestrated with Docker Compose behind Nginx.',
-      'Dark theme, accessibility and contrast improvements.',
-    ],
-    outcomes: ['Profiles managed centrally through one API.', 'Consistent environments from dev to deploy.'],
-    stack: ['React', 'Vite', 'Node.js', 'Express', 'Docker Compose', 'Nginx', 'Jenkins'],
-    links: [{ label: 'GitHub', href: 'https://github.com/janahamad/team-protfolio' }],
-  },
 ];
 
 export const en: Content = {
@@ -417,6 +399,18 @@ export const en: Content = {
         tags: ['Node.js', 'Express', 'React', 'PHP', 'ASP.NET Core', 'PostgreSQL', 'MySQL', 'MariaDB', 'Docker', 'Admin dashboards', 'Full stack'],
       },
     ],
+    licenses: {
+      badge: 'Licensed freelancer',
+      view: 'View licenses',
+      title: 'Freelance licenses',
+      note: 'Registered on the Freelance platform of the Ministry of Human Resources and Social Development. Each document can be verified with its QR code.',
+      open: 'Open PDF',
+      close: 'Close',
+      items: [
+        { title: 'Websites Programming & Developing', valid: 'Valid until Feb 2027', file: '/licenses/freelance-license-web-development.pdf' },
+        { title: 'Cloud Networks', valid: 'Valid until Jun 2027', file: '/licenses/freelance-license-cloud-networks.pdf' },
+      ],
+    },
   },
   education: [
     { title: 'Bachelor’s Degree in Computer Science', org: 'Qassim University', period: '2019 — 2024' },
