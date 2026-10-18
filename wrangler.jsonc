@@ -1,8 +1,6 @@
-// Cloudflare Workers static-assets deploy (used by `npx wrangler deploy`).
+// Cloudflare Pages config (Git-connected project "jana-alghasham").
 {
   "name": "jana-alghasham",
-  "compatibility_date": "2025-10-01",
-  "assets": {
-    "directory": "./dist"
-  }
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2025-10-01"
 }
