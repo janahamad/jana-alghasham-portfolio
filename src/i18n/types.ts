@@ -40,7 +40,7 @@ export type Content = {
     openToWork: string;
     openToWorkLong: string;
     openToWorkRoles: string;
-    sections: Record<'top' | 'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'studio' | 'credentials' | 'contact', string>;
+    sections: Record<'top' | 'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'studio' | 'credentials' | 'services' | 'contact', string>;
     heads: Record<'about' | 'infrastructure' | 'projects' | 'experience' | 'stack' | 'credentials', { kicker: string; title: string; lead?: string }>;
     hero: { terminalAria: string; headlineAria: string };
     about: { artAlt: string; artCaption: string };
@@ -65,6 +65,14 @@ export type Content = {
   stats: { value: number; label: string }[];
   experience: Job[];
   studio: { kicker: string; name: string; description: string; visit: string };
+  services: {
+    kicker: string;
+    title: string;
+    lead: string;
+    cta: string;
+    // `id` matches an optional thumbnail at src/assets/services/<id>.(png|jpg|jpeg|webp|svg)
+    items: { id: string; href: string; title: string; description: string; tags: string[] }[];
+  };
   education: { title: string; org: string; period: string; note?: string }[];
   certifications: { title: string; issuer: string; year: string; badge: 'aws' | 'oci' | null }[];
   skills: { group: string; items: string[] }[];

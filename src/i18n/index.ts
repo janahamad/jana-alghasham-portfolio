@@ -21,6 +21,8 @@ export const person = {
   },
 };
 
-export const sectionIds = ['top', 'about', 'infrastructure', 'projects', 'experience', 'stack', 'studio', 'credentials', 'contact'] as const;
+export const sectionIds = ['top', 'about', 'infrastructure', 'projects', 'experience', 'stack', 'studio', 'credentials', 'services', 'contact'] as const;
+export { serviceLinks } from './links';
+
 export const studioUrl = 'https://jxtechstudio.com/';
 export const pad = (n: number) => String(n).padStart(2, '0');

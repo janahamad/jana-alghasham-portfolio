@@ -1,4 +1,5 @@
 import type { Content, Job, Project } from './types';
+import { serviceLinks } from './links';
 
 const experience: Job[] = [
   {
@@ -253,6 +254,7 @@ export const ar: Content = {
       stack: 'الأدوات',
       studio: 'JXTech Studio',
       credentials: 'الشهادات',
+      services: 'الخدمات',
       contact: 'تواصل',
     },
     heads: {
@@ -358,6 +360,35 @@ export const ar: Content = {
     name: 'JXTech Studio',
     description: 'استوديو منتجات رقمية يصمّم ويبني ويطلق منتجات الويب، من النموذج الأولي (MVP) وحتى المنصات المتكاملة.',
     visit: 'زيارة jxtechstudio.com',
+  },
+  services: {
+    kicker: 'عمل حر · Freelancer',
+    title: 'الخدمات<br/>التي أقدّمها',
+    lead: 'أعمل أيضًا كمستقلة (Freelancer) في مشاريع قصيرة أو دعم مستمر. اختر خدمة لترى الباقات والأسعار ومدة التسليم.',
+    cta: 'عرض الخدمة',
+    items: [
+      {
+        id: 'server-setup',
+        href: serviceLinks['server-setup'],
+        title: 'خوادم Linux وDocker ونشر DevOps',
+        description: 'تحتاج تطبيقك يعمل على خادم Linux آمن وجاهز للإنتاج؟ سأجهّزه لك.',
+        tags: ['Linux', 'Docker', 'Jenkins', 'Grafana', 'Terraform', 'Kubernetes', 'Supabase', 'إدارة الخوادم', 'الترحيل', 'الإعداد', 'البنية التحتية'],
+      },
+      {
+        id: 'n8n',
+        href: serviceLinks.n8n,
+        title: 'أتمتة سير العمل بـ n8n ووكلاء الذكاء الاصطناعي',
+        description: 'تعبت من تصدير البيانات ونسخها بين الأنظمة وإعداد التقارير يدويًا؟ سأؤتمت ذلك باستخدام n8n والذكاء الاصطناعي.',
+        tags: ['n8n', 'أتمتة سير العمل', 'تكامل API', 'وكلاء ذكاء اصطناعي', 'GPT', 'Gemini', 'Claude', 'JavaScript', 'Python', 'SQL'],
+      },
+      {
+        id: 'software-dev',
+        href: serviceLinks['software-dev'],
+        title: 'تطبيقات ويب مخصّصة وبوابات أعمال داخلية',
+        description: 'تحتاج تطبيق ويب مبنيًّا حول طريقة عمل شركتك فعلًا؟ سأصمّمه وأبنيه وأنشره لك.',
+        tags: ['Node.js', 'Express', 'React', 'PHP', 'ASP.NET Core', 'PostgreSQL', 'MySQL', 'MariaDB', 'Docker', 'لوحات تحكم', 'Full stack'],
+      },
+    ],
   },
   education: [
     { title: 'بكالوريوس علوم الحاسب', org: 'جامعة القصيم', period: '2019 — 2024' },

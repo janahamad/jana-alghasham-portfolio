@@ -1,0 +1,205 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import SectionHead from './SectionHead.astro';
+import { content, pad, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const t = content[lang];
+const s = t.services;
+
+// Optional thumbnails: src/assets/services/<id>.(png|jpg|jpeg|webp|svg)
+const thumbs = import.meta.glob<{ default: ImageMetadata }>('../assets/services/*.{png,jpg,jpeg,webp,svg}', { eager: true });
+const thumbFor = (id: string) =>
+  Object.entries(thumbs).find(([path]) => path.split('/').pop()!.replace(/\.\w+$/, '') === id)?.[1].default;
+---
+
+<section id="services" class="section" data-section={t.ui.sections.services} data-index="08">
+  <div class="container">
+    <SectionHead index="08" kicker={s.kicker} title={s.title} lead={s.lead} />
+
+    <ul class="services">
+      {
+        s.items.map((item, i) => {
+          const thumb = thumbFor(item.id);
+          return (
+            <li data-reveal style={`--i:${i}`}>
+              <a class="service" href={item.href} target="_blank" rel="noopener">
+                <div class="media">
+                  {thumb ? (
+                    <Image src={thumb} alt="" widths={[480, 720, 960]} sizes="(min-width: 960px) 400px, 92vw" />
+                  ) : (
+                    <div class="placeholder" aria-hidden="true">
+                      <span class="ph-num">{pad(i + 1)}</span>
+                    </div>
+                  )}
+                </div>
+                <div class="body">
+                  {thumb && <p class="mono num">{pad(i + 1)}</p>}
+                  <h3 class="title">{item.title}</h3>
+                  <p class="desc">{item.description}</p>
+                  {item.tags.length > 0 && (
+                    <ul class="tags">
+                      {item.tags.map((tag) => (
+                        <li class="chip">{tag}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <span class="cta mono">
+                    {s.cta} <i aria-hidden="true">↗</i>
+                  </span>
+                </div>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: clamp(16px, 2vw, 24px);
+  }
+  @media (min-width: 960px) {
+    .services {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  .services > li {
+    display: grid;
+  }
+
+  .service {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: 0 0 0 1px var(--line);
+    overflow: hidden;
+    transition:
+      box-shadow 250ms ease,
+      transform 160ms var(--ease-out);
+  }
+  .service:active {
+    transform: scale(0.99);
+  }
+  .service:focus-visible {
+    outline-offset: 2px;
+  }
+
+  .media {
+    aspect-ratio: 2560 / 1538; /* matches the service cover images */
+    overflow: hidden;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 600ms var(--ease-out);
+  }
+
+  /* Branded fallback tile when no thumbnail is provided */
+  .placeholder {
+    position: relative;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(70% 90% at 100% 0%, rgb(38 31 179 / 0.55), transparent 70%),
+      radial-gradient(60% 80% at 0% 100%, rgb(191 9 47 / 0.25), transparent 70%),
+      var(--surface-2);
+  }
+  .placeholder::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    mask-image: radial-gradient(60% 60% at 50% 50%, #000, transparent 80%);
+    -webkit-mask-image: radial-gradient(60% 60% at 50% 50%, #000, transparent 80%);
+  }
+  .ph-num {
+    position: relative;
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-variation-settings: 'opsz' 144, 'SOFT' 100;
+    font-size: clamp(72px, 9vw, 120px);
+    line-height: 1;
+    color: var(--text);
+    opacity: 0.9;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: clamp(20px, 2.4vw, 28px);
+  }
+  .num {
+    margin: 0;
+    color: var(--accent-bright);
+  }
+  .title {
+    margin: 0;
+    font-size: clamp(21px, 1.9vw, 25px);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  :global([lang='ar']) .title {
+    letter-spacing: 0;
+    line-height: 1.45;
+  }
+  .desc {
+    margin: 0;
+    color: var(--text-muted);
+    text-wrap: pretty;
+  }
+  .tags {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .cta {
+    margin-top: auto;
+    padding-top: 8px;
+    color: var(--text);
+  }
+  .cta i {
+    display: inline-block;
+    font-style: normal;
+    color: var(--accent-bright);
+    transition: transform 250ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .service:hover {
+      box-shadow:
+        0 0 0 1px var(--line-strong),
+        0 24px 60px -30px rgb(38 31 179 / 0.7);
+    }
+    .service:hover .media :global(img) {
+      transform: scale(1.03);
+    }
+    .service:hover .cta i {
+      transform: translate(2px, -2px);
+    }
+  }
+</style>

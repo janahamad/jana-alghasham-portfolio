@@ -1,4 +1,5 @@
 import type { Content, Job, Project } from './types';
+import { serviceLinks } from './links';
 
 const experience: Job[] = [
   {
@@ -277,6 +278,7 @@ export const en: Content = {
       stack: 'Stack',
       studio: 'JXTech Studio',
       credentials: 'Credentials',
+      services: 'Services',
       contact: 'Contact',
     },
     heads: {
@@ -382,6 +384,35 @@ export const en: Content = {
     name: 'JXTech Studio',
     description: 'A digital product studio that designs, builds and ships web products, from MVPs to full-scale platforms.',
     visit: 'Visit jxtechstudio.com',
+  },
+  services: {
+    kicker: 'Freelancer',
+    title: 'Services<br/>I provide',
+    lead: 'I also work as a freelancer, on one-off projects or ongoing support. Pick a service to see packages, pricing and delivery time.',
+    cta: 'View service',
+    items: [
+      {
+        id: 'server-setup',
+        href: serviceLinks['server-setup'],
+        title: 'Linux Servers, Docker & DevOps Deployments',
+        description: 'Need your app running on a secure, production-ready Linux server? I’ll set it up for you.',
+        tags: ['Linux', 'Docker', 'Jenkins', 'Grafana', 'Terraform', 'Kubernetes', 'Supabase', 'Server administration', 'Migration', 'Configuration', 'Infrastructure'],
+      },
+      {
+        id: 'n8n',
+        href: serviceLinks.n8n,
+        title: 'n8n Automation Workflows & AI Agents',
+        description: 'Tired of exporting data, copying between systems and building reports by hand? I’ll automate it with n8n and AI.',
+        tags: ['n8n', 'Workflow automation', 'API integration', 'AI agents', 'GPT', 'Gemini', 'Claude', 'JavaScript', 'Python', 'SQL'],
+      },
+      {
+        id: 'software-dev',
+        href: serviceLinks['software-dev'],
+        title: 'Custom Web Apps & Internal Business Portals',
+        description: 'Need a custom web app built around how your business actually works? I’ll design, build and deploy it for you.',
+        tags: ['Node.js', 'Express', 'React', 'PHP', 'ASP.NET Core', 'PostgreSQL', 'MySQL', 'MariaDB', 'Docker', 'Admin dashboards', 'Full stack'],
+      },
+    ],
   },
   education: [
     { title: 'Bachelor’s Degree in Computer Science', org: 'Qassim University', period: '2019 — 2024' },
