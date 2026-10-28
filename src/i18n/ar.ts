@@ -204,6 +204,46 @@ const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ranaahmd/SEO' },
     ],
   },
+  {
+    slug: 'aljawad-premium-website',
+    title: 'موقع الجواد بريميوم',
+    category: 'موقع شركة',
+    type: 'فردي',
+    image: 'aljawad-landing',
+    summary: 'موقع شركة ثنائي اللغة مع بوابة توظيف مدمجة لشركة ضيافة وتوريد أغذية، صمّمته وبنيته واستضفته من البداية إلى النهاية.',
+    problem: 'لم يكن للشركة موقع إلكتروني: لا حضور رقمي لعلاماتها التجارية ومصنعها وخدماتها اللوجستية، ولا وسيلة لنشر الوظائف أو استقبال الطلبات.',
+    flow: ['Cloudflare DNS', 'Nginx وTLS', 'حاوية PHP', 'MySQL'],
+    built: [
+      'موقع بالعربية والإنجليزية بدعم كامل لـ RTL: شريط عرض رئيسي، وأقسام من نحن، والتواجد، واللوجستيات، والتراخيص، والمصنع، والعلامات التجارية، والشركاء.',
+      'بوابة توظيف: وظائف بلغتين مع بحث وتصفية بالتاريخ، ورفع السيرة الذاتية، ولوحة إدارة محمية بحالات ملوّنة للمتقدّمين.',
+      'أساسيات السيو: وسوم meta، وبطاقات Open Graph وTwitter، وsitemap.xml، وrobots.txt، وصفحة 404 مخصّصة.',
+      'حاويات Docker Compose (الموقع، وMySQL، وphpMyAdmin) على VPS خلف Nginx وLet’s Encrypt وCloudflare.',
+    ],
+    outcomes: [
+      'إطلاق النسخة الأولى في ديسمبر 2025 على استضافة مشتركة.',
+      'نقله وإعادة إطلاقه في يناير 2026 على VPS بحاويات Docker وعلى نطاق فرعي خاص به.',
+    ],
+    stack: ['PHP 8.2', 'MySQL 8', 'Docker Compose', 'Nginx', 'Cloudflare', 'Let’s Encrypt', 'JavaScript', 'Google Analytics'],
+    links: [{ label: 'الموقع المباشر', href: 'https://home.aljawad.sa/' }],
+  },
+  {
+    slug: 'teravita-website',
+    title: 'موقع تيرافيتا',
+    category: 'موقع شركة',
+    type: 'فردي',
+    image: 'teravita-landing',
+    summary: 'صفحة تعريفية ثنائية اللغة لشركة عقارات واستشارات ومقاولات، مُحوّاة ومنشورة على Kubernetes (k3s).',
+    problem: 'لم يكن للشركة موقع إلكتروني ولا حضور رقمي تعرض من خلاله خدماتها للعملاء.',
+    flow: ['النطاق وTLS', 'Nginx', 'خدمة k3s', 'حاوية PHP'],
+    built: [
+      'صفحة بالعربية والإنجليزية بأقسام من نحن، والخدمات، ولماذا نحن، مع نموذج تواصل وملف تعريفي قابل للتحميل.',
+      'صورة Docker للموقع، وملفات Kubernetes: Deployment بحدود للمعالج والذاكرة، وService من نوع NodePort.',
+      'إعداد Nginx كوكيل عكسي، وشهادة Let’s Encrypt، وربط النطاق على VPS.',
+    ],
+    outcomes: ['أُطلق في 2026.', 'يعمل على Kubernetes (k3s) بحدود موارد محدّدة.'],
+    stack: ['Kubernetes (k3s)', 'Docker', 'Nginx', 'PHP', 'Let’s Encrypt', 'JavaScript'],
+    links: [{ label: 'الموقع المباشر', href: 'https://teravita.sa/' }],
+  },
 ];
 
 export const ar: Content = {

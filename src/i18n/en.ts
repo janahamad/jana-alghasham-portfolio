@@ -228,6 +228,46 @@ const projects: Project[] = [
       { label: 'GitHub', href: 'https://github.com/ranaahmd/SEO' },
     ],
   },
+  {
+    slug: 'aljawad-premium-website',
+    title: 'Al Jawad Premium Website',
+    category: 'Corporate website',
+    type: 'Solo',
+    image: 'aljawad-landing',
+    summary: 'A bilingual corporate website with a built-in careers portal for a hospitality and food supply company, designed, built and hosted end to end.',
+    problem: 'The company had no website: no online presence for its brands, factory and logistics, and no way to publish jobs or receive applications.',
+    flow: ['Cloudflare DNS', 'Nginx + TLS', 'PHP container', 'MySQL'],
+    built: [
+      'Arabic/English site with full RTL: hero slider, About, Presence, Logistics, Licenses, Factory, Brands and Partners.',
+      'Careers portal: bilingual listings with search and date filters, CV upload, and a secured admin dashboard with colour-coded applicant statuses.',
+      'SEO basics: meta tags, Open Graph and Twitter cards, sitemap.xml, robots.txt and a custom 404 page.',
+      'Docker Compose stack (web, MySQL, phpMyAdmin) on a VPS behind Nginx, Let’s Encrypt and Cloudflare.',
+    ],
+    outcomes: [
+      'Launched in December 2025 on shared hosting.',
+      'Migrated and relaunched in January 2026 as a Dockerized VPS deployment on its own subdomain.',
+    ],
+    stack: ['PHP 8.2', 'MySQL 8', 'Docker Compose', 'Nginx', 'Cloudflare', 'Let’s Encrypt', 'JavaScript', 'Google Analytics'],
+    links: [{ label: 'Live site', href: 'https://home.aljawad.sa/' }],
+  },
+  {
+    slug: 'teravita-website',
+    title: 'Teravita Website',
+    category: 'Corporate website',
+    type: 'Solo',
+    image: 'teravita-landing',
+    summary: 'A bilingual landing page for a real estate, consultancy and construction company, containerized and deployed on Kubernetes (k3s).',
+    problem: 'The company had no website or online presence to present its services to clients.',
+    flow: ['Domain + TLS', 'Nginx', 'k3s Service', 'PHP container'],
+    built: [
+      'Arabic/English landing page with About, Services and Why Us sections, a contact form and a downloadable brochure.',
+      'Docker image for the site, plus Kubernetes manifests: a Deployment with CPU/memory limits and a NodePort Service.',
+      'Nginx reverse proxy, Let’s Encrypt SSL and domain setup on a VPS.',
+    ],
+    outcomes: ['Launched in 2026.', 'Runs on Kubernetes (k3s) with resource limits.'],
+    stack: ['Kubernetes (k3s)', 'Docker', 'Nginx', 'PHP', 'Let’s Encrypt', 'JavaScript'],
+    links: [{ label: 'Live site', href: 'https://teravita.sa/' }],
+  },
 ];
 
 export const en: Content = {
