@@ -453,10 +453,11 @@ export const en: Content = {
     },
   },
   education: [
-    { title: 'Bachelor’s Degree in Computer Science', org: 'Qassim University', period: '2019 — 2024' },
+    { title: 'Bachelor’s Degree in Computer Science', org: 'Qassim University', period: '2019 — 2024', logo: 'qassim' },
     {
       title: 'Software Development Bootcamp',
       org: 'Saudi Digital Academy',
+      logo: 'sda',
       period: 'Aug 2024 — Nov 2024',
       note: 'Full-stack development with C#, ASP.NET Core, React, PostgreSQL and Supabase.',
     },

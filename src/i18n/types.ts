@@ -83,7 +83,7 @@ export type Content = {
       items: { title: string; valid: string; file: string }[];
     };
   };
-  education: { title: string; org: string; period: string; note?: string }[];
+  education: { title: string; org: string; period: string; logo: 'qassim' | 'sda'; note?: string }[];
   certifications: { title: string; issuer: string; year: string; badge: 'aws' | 'oci' | null }[];
   skills: { group: string; items: string[] }[];
   softSkills: string[];

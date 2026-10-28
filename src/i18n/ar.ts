@@ -429,10 +429,11 @@ export const ar: Content = {
     },
   },
   education: [
-    { title: 'بكالوريوس علوم الحاسب', org: 'جامعة القصيم', period: '2019 — 2024' },
+    { title: 'بكالوريوس علوم الحاسب', org: 'جامعة القصيم', period: '2019 — 2024', logo: 'qassim' },
     {
       title: 'معسكر تطوير البرمجيات',
       org: 'الأكاديمية السعودية الرقمية',
+      logo: 'sda',
       period: 'أغسطس 2024 — نوفمبر 2024',
       note: 'تطوير Full-stack باستخدام C# وASP.NET Core وReact وPostgreSQL وSupabase.',
     },
